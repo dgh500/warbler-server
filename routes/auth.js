@@ -24,6 +24,6 @@ const upload = multer({storage});
 
 
 router.post('/signup', upload.single('profileImageUrl'), signup);
-router.post('/signin', signin);
+router.post('/signin', upload.none(), signin);
 
 module.exports = router;

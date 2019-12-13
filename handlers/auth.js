@@ -4,21 +4,22 @@ const jwt = require ('jsonwebtoken');
 exports.signup = async function(req, res, next) {
   try {
     // create a user
-    let profileImageUrl = req.file.filename;
-    let newUser = {...req.body, profileImageUrl};
+    let newUser = {...req.body};
+    if(req.file !== undefined) {
+      let profileImageUrl = req.file.filename;
+      let newUser = {...req.body, profileImageUrl};
+    }
     let user = await db.User.create(newUser);
     let { id, username } = user;
     // create a token (signing a token)
     let token = jwt.sign({
       id,
-      username,
-      profileImageUrl
+      username
     },
     process.env.SECRET_KEY);
     return res.status(200).json({
       id,
       username,
-      profileImageUrl,
       token
     });
   } catch(err) {
@@ -43,14 +44,12 @@ exports.signin = async function(req, res, next) {
     if(isMatch) {
       let token = jwt.sign({
         id,
-        username,
-        profileImageUrl
+        username
       },
       process.env.SECRET_KEY);
       return res.status(200).json({
         id,
         username,
-        profileImageUrl,
         token
       });
     } else {
