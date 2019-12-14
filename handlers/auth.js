@@ -11,11 +11,13 @@ exports.signup = async function(req, res, next) {
       newUser = {...req.body};
     }
     let user = await db.User.create(newUser);
-    let { id, username, profileImageUrl } = user;
+    let { id, username, profileImageUrl, email } = user;
     // create a token (signing a token)
     let token = jwt.sign({
       id,
+      username,
       profileImageUrl,
+      email,
       username
     },
     process.env.SECRET_KEY);
@@ -23,6 +25,7 @@ exports.signup = async function(req, res, next) {
       id,
       username,
       profileImageUrl,
+      email,
       token
     });
   } catch(err) {
@@ -42,17 +45,19 @@ exports.signin = async function(req, res, next) {
     let user = await db.User.findOne({
       email: req.body.email
     });
-    let { id, username, profileImageUrl } = user;
+    let { id, username, profileImageUrl, email } = user;
     let isMatch = await user.comparePassword(req.body.password);
     if(isMatch) {
       let token = jwt.sign({
         id,
+        email,
         profileImageUrl,
         username
       },
       process.env.SECRET_KEY);
       return res.status(200).json({
         id,
+        email,
         username,
         profileImageUrl,
         token

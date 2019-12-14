@@ -34,13 +34,21 @@ exports.createMessage = async function(req, res, next) {
 // Assumes GET  -/api/users/:id/messages/:message_id
 exports.getMessage = async function(req, res, next) {
   try {
-    let message = await db.Message.find(req.params.message_id);
+    let message = await db.Message.findById(req.params.message_id);
     return res.status(200).json(message);
   } catch(e) {
     return next(e);
   }
 };
 
+exports.updateMessage = async function(req, res, next) {
+  try {
+    let message = await db.Message.findByIdAndUpdate(req.params.message_id,{ text: req.body.updatedMessage });
+    return res.status(200).json(message);
+  } catch(e) {
+    return next(e);
+  }
+}
 
 exports.deleteMessage = async function(req, res, next) {
   try {

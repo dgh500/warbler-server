@@ -13,6 +13,7 @@ const PORT = 8081;
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
 // Any requests to /api/auth (then anything) passed off to the authRoutes file
