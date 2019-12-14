@@ -3,14 +3,15 @@ const jwt = require ('jsonwebtoken');
 
 exports.signup = async function(req, res, next) {
   try {
-    // create a user
-    let newUser = {...req.body};
+    let newUser = {};
     if(req.file !== undefined) {
       let profileImageUrl = req.file.filename;
-      let newUser = {...req.body, profileImageUrl};
+      newUser = {...req.body, profileImageUrl};
+    } else {
+      newUser = {...req.body};
     }
     let user = await db.User.create(newUser);
-    let { id, username } = user;
+    let { id, username, profileImageUrl } = user;
     // create a token (signing a token)
     let token = jwt.sign({
       id,
