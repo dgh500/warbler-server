@@ -43,7 +43,7 @@ exports.getMessage = async function(req, res, next) {
 
 exports.updateMessage = async function(req, res, next) {
   try {
-    let message = await db.Message.findByIdAndUpdate(req.params.message_id,{ text: req.body.updatedMessage });
+    let message = await db.Message.findByIdAndUpdate(req.params.message_id,{ text: req.body.text });
     return res.status(200).json(message);
   } catch(e) {
     return next(e);
