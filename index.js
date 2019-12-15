@@ -6,6 +6,7 @@ const bodyParser     = require('body-parser');
 const db             = require('./models');
 const errorHandler   = require('./handlers/error');
 const authRoutes     = require('./routes/auth');
+const userRoutes     = require('./routes/user');
 const messagesRoutes = require('./routes/messages');
 const { loginRequired, ensureCorrectUser } = require('./middleware/auth');
 
@@ -18,6 +19,7 @@ app.use(express.static(__dirname + "/public"));
 
 // Any requests to /api/auth (then anything) passed off to the authRoutes file
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messagesRoutes);
 
 app.get('/api/messages', loginRequired, async function(req, res, next) {
