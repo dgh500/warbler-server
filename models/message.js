@@ -11,7 +11,11 @@ const messageSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User" // This refers to the User model - must be caps U to match
-    }
+    },
+    replies: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message"
+    }]
   },
   {
     timestamps: true

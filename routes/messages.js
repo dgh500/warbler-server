@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
 
-const { createMessage, getMessage, updateMessage, deleteMessage } = require('../handlers/messages');
+const { createMessage, getMessage, updateMessage, deleteMessage, replyToMessage } = require('../handlers/messages');
 
 // prefix all routes with /api/users/:id/messages
 router.route('/').post(createMessage);
@@ -12,5 +12,7 @@ router.route('/:message_id')
   .put(updateMessage)
   .delete(deleteMessage);
 
+router.route('/:message_id/reply')
+  .post(replyToMessage);
 
 module.exports = router;
