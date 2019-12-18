@@ -1,19 +1,5 @@
 const db = require('../models'); // refers to /models/index.js
 
-/**
-  * @param {req} - Request object, assumes the following and inserts message and returns it once added to database
-  * req.body.text         - The new message
-  * req.params.id         - User ID of logged in user (who will be doing the replying)
-  * @return 200 status and JSON new message, or pass error to next
-  */
-exports.createMessage = async function(req, res, next) {
-  try {
-    let newMessage = createMessageHelper(req.body.text,req.params.id);
-    return res.status(200).json(newMessage);
-  } catch(e) {
-    return next(e);
-  }
-};
 
 /**
   * Avoid duplication of code between reply-to and create message
@@ -62,6 +48,20 @@ exports.replyToMessage = async function(req, res, next) {
   }
 }
 
+/**
+  * @param {req} - Request object, assumes the following and inserts message and returns it once added to database
+  * req.body.text         - The new message
+  * req.params.id         - User ID of logged in user (who will be doing the replying)
+  * @return 200 status and JSON new message, or pass error to next
+  */
+exports.createMessage = async function(req, res, next) {
+  try {
+    let newMessage = createMessageHelper(req.body.text,req.params.id);
+    return res.status(200).json(newMessage);
+  } catch(e) {
+    return next(e);
+  }
+};
 
 // Assumes GET  -/api/users/:id/messages/:message_id
 exports.getMessage = async function(req, res, next) {
