@@ -66,7 +66,12 @@ exports.createMessage = async function(req, res, next) {
 // Assumes GET  -/api/users/:id/messages/:message_id
 exports.getMessage = async function(req, res, next) {
   try {
-    let message = await db.Message.findById(req.params.message_id);
+    let message = await db.Message.findById(req.params.message_id)
+    .populate('user', {
+      username: true,
+      profileImageUrl: true
+    })
+    .populate('replies');
     return res.status(200).json(message);
   } catch(e) {
     return next(e);

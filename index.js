@@ -29,6 +29,10 @@ app.get('/api/messages', loginRequired, async function(req, res, next) {
       .populate('user', {
         username: true,
         profileImageUrl: true
+      })
+      .populate({
+        path: 'replies',
+        populate: { path: 'user'}
       });
       return res.status(200).json(messages);
   } catch(e) {
