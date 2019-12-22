@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 
 // Prefix - /api/users/:id
-router.route('/:id')
+router.route('/')
   .get(getUser)
   .put(upload.single('profileImageUrl'),updateUser)
   .delete(deleteUser);
