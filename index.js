@@ -19,7 +19,7 @@ app.use(express.static(__dirname + "/public"));
 
 // Any requests to /api/auth (then anything) passed off to the authRoutes file
 app.use('/api/auth', authRoutes);
-app.use('/api/users/:id', loginRequired, ensureCorrectUser, userRoutes);
+app.use('/api/users/:id', /*loginRequired, ensureCorrectUser,*/ userRoutes);
 app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messagesRoutes);
 
 app.get('/api/messages', loginRequired, async function(req, res, next) {

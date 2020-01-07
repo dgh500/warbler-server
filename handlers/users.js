@@ -22,4 +22,20 @@ exports.updateUser = async function(req, res, next) {
   }
 }
 
+/**
+ * Gets user statistics - requires req.params.id
+ * Returns Obj.postCount
+ */
+exports.getUserStats = async function(req, res, next) {
+  try {
+    let postCount = await db.User.find({_id: req.params.id}, {messages: 1});
+    const userStats = {
+      postCount: postCount[0].messages.length
+    }
+    return res.status(200).json(userStats);
+  } catch(e) {
+    return next(e);
+  }
+}
+
 exports.deleteUser = () => null;

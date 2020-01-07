@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const { createUser, getUser, updateUser, deleteUser } = require('../handlers/users');
+const { createUser, getUser, updateUser, deleteUser, getUserStats } = require('../handlers/users');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -27,5 +27,10 @@ router.route('/')
   .get(getUser)
   .put(upload.single('profileImageUrl'),updateUser)
   .delete(deleteUser);
+
+// Aux routes
+router.route('/stats')
+  .get(getUserStats);
+
 
 module.exports = router;

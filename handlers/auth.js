@@ -40,15 +40,15 @@ exports.signup = async function(req, res, next) {
   }
 }
 
-exports.updateUser = async function(req, res, next) {
-  try {
-    let updatedUser = {...req.body};
-    let user = await db.User.findByIdAndUpdate(req.params.id,{updatedUser});
-    return res.status(200).json(user);
-  } catch(e) {
-    return next(e);
-  }
-}
+// exports.updateUser = async function(req, res, next) {
+//   try {
+//     let updatedUser = {...req.body};
+//     let user = await db.User.findByIdAndUpdate(req.params.id,{updatedUser});
+//     return res.status(200).json(user);
+//   } catch(e) {
+//     return next(e);
+//   }
+// }
 
 exports.signin = async function(req, res, next) {
   try {
