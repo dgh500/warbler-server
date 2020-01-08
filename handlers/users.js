@@ -29,9 +29,22 @@ exports.updateUser = async function(req, res, next) {
 exports.getUserStats = async function(req, res, next) {
   try {
     let postCount = await db.User.find({_id: req.params.id}, {messages: 1});
+    let replyCountArr = await db.Message.find({},{replies: 1}).populate({
+      path: 'replies',
+      match: {"user": { "$in": [req.params.id] }},
+      select: 'text -_id'
+    });
+    let replyCount = replyCountArr.reduce(function(acc,v) {
+      if(v.replies.length !== 0) {
+        acc+=v.replies.length;
+      }
+      return acc;
+    }, 0);
     const userStats = {
-      postCount: postCount[0].messages.length
+      postCount: postCount[0].messages.length,
+      replyCount: replyCount
     }
+
     return res.status(200).json(userStats);
   } catch(e) {
     return next(e);
