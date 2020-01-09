@@ -89,6 +89,17 @@ exports.updateMessage = async function(req, res, next) {
 
 exports.deleteMessage = async function(req, res, next) {
   try {
+    // Also need to check if it has replies, if so these need to be removed before the parent message is removed
+    /*** not actually removing the messages... ***/
+    let replies = await db.Message.find({_id:req.params.message_id},{replies:1});
+    if(replies[0] !== undefined) {
+      replies[0].replies.forEach(function(v,i,a) {
+        db.Message.findByIdAndRemove(v,function() {
+          console.log(v + 'Removed');
+        });
+      });
+    }
+
     /*
      * Have to use this instead of findByIdAndRemove mongoose method, as that wouldn't work with
      * the .pre hook in the models/message.js file which is on the 'remove' method
