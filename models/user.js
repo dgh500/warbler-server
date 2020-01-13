@@ -26,10 +26,7 @@ const userSchema = new mongoose.Schema({
   messages: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message' // Must be caps M to refer to Message model
-  }],
-  hashtags: {
-    type: [String]
-  }
+  }]
 });
 
 /*

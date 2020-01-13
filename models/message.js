@@ -15,7 +15,10 @@ const messageSchema = new mongoose.Schema(
     replies: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message"
-    }]
+    }],
+    hashtags: {
+      type: [String]
+    }
   },
   {
     timestamps: true

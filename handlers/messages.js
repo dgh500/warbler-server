@@ -9,8 +9,12 @@ const db = require('../models'); // refers to /models/index.js
   */
 createMessageHelper = async function(text,user) {
   try {
+    // Process the message for hashtags
+    let hashtags = extractHashtags(text);
+    // Create msg
     let message = await db.Message.create({
       text,
+      hashtags,
       user
     });
     let foundUser = await db.User.findById(user);
@@ -24,6 +28,11 @@ createMessageHelper = async function(text,user) {
   } catch(e) {
     return e;
   }
+}
+
+// Takes a string (possibly including hashtags and returns the hashtags from that string
+extractHashtags = function(text) {
+return text.split(' ').filter(v=> v.startsWith('#'));
 }
 
 /**
