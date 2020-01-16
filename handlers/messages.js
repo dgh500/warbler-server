@@ -72,6 +72,27 @@ exports.createMessage = async function(req, res, next) {
   }
 };
 
+exports.getHashtags = async function(req, res, next) {
+  try {
+    let hashtags = await db.Message.find(
+      {
+        hashtags: {
+            $exists: true,
+            $not: {$size: 0}
+        }
+      },
+      {
+        hashtags: 1,
+        _id: 0
+      });
+      // UP TO HERE - RETURNING LONGWINDED [{hashtags:[]}] - pretty this up so it just returns an array of hashtags (no duplicates)
+
+    return res.status(200).json(hashtags[0].hashtags);
+  } catch(e) {
+    return next(e);
+  }
+}
+
 // Assumes GET  -/api/users/:id/messages/:message_id
 exports.getMessage = async function(req, res, next) {
   try {
