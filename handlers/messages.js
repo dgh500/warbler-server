@@ -85,9 +85,17 @@ exports.getHashtags = async function(req, res, next) {
         hashtags: 1,
         _id: 0
       });
-      // UP TO HERE - RETURNING LONGWINDED [{hashtags:[]}] - pretty this up so it just returns an array of hashtags (no duplicates)
 
-    return res.status(200).json(hashtags[0].hashtags);
+    let retHashtags = []
+    hashtags.forEach((v) => {
+      v.hashtags.forEach((ht) => {
+        if(!retHashtags.includes(ht)) {
+          retHashtags.push(ht);
+        }
+      });
+    });
+
+    return res.status(200).json(retHashtags);
   } catch(e) {
     return next(e);
   }
