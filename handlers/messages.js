@@ -72,6 +72,31 @@ exports.createMessage = async function(req, res, next) {
   }
 };
 
+// Takes in req.body.hashtag and returns messages with this hashtag
+exports.filterByHashtag = async function(req, res, next) {
+  try {
+    let messages = await db.Message.find({
+      hashtags: `#${req.params.hashtag}`
+    })
+      .sort({createdAt: 'desc'})
+      .populate('user', {
+        username: true,
+        profileImageUrl: true
+      })
+      .populate({
+        path: 'replies',
+        populate: {
+          path: 'user',
+          select: 'username profileImageUrl'
+        }
+      });
+      return res.status(200).json(messages);
+  } catch(e) {
+    return next(e);
+  }
+}
+
+// Gets all hashtags in the database & return as an array of strings
 exports.getHashtags = async function(req, res, next) {
   try {
     let hashtags = await db.Message.find(

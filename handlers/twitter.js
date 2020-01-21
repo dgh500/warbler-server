@@ -11,12 +11,14 @@ exports.getByLocation = async function(req, res, next) {
 
     instance({
         method: 'get',
-        url: 'https://api.twitter.com/1.1/trends/place.json?id=30079&grant_type=client_credentials',
+        url: `https://api.twitter.com/1.1/trends/place.json?id=${req.params.location}&grant_type=client_credentials`,
         withCredentials: true
       })
       .then(function(result) {
         let resultTags = result.data[0].trends.map((v,i) => {
-          return v.name;
+          if(v.name[0] === '#') {
+            return v.name;
+          }
         });
         return res.status(200).json({resultTags});
 //        console.log(resultTags);
