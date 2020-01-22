@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
 
-const { createMessage, getMessage, updateMessage, deleteMessage, replyToMessage, getHashtags, filterByHashtag } = require('../handlers/messages');
+const { createMessage, getMessage, updateMessage, deleteMessage, replyToMessage, getHashtags, filterByHashtag, filterByUser } = require('../handlers/messages');
 
 // prefix all routes with /api/users/:id/messages
 router.route('/').post(createMessage);
@@ -20,5 +20,8 @@ router.route('/:message_id/reply')
 
 router.route('/mode/hashtags/:hashtag')
   .get(filterByHashtag);
+
+router.route('/mode/user/:username')
+  .get(filterByUser);
 
 module.exports = router;

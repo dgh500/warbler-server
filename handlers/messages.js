@@ -1,5 +1,5 @@
 const db = require('../models'); // refers to /models/index.js
-
+const ObjectId = require('mongoose').Types.ObjectId;
 
 /**
   * Avoid duplication of code between reply-to and create message
@@ -77,6 +77,34 @@ exports.filterByHashtag = async function(req, res, next) {
   try {
     let messages = await db.Message.find({
       hashtags: `#${req.params.hashtag}`
+    })
+      .sort({createdAt: 'desc'})
+      .populate('user', {
+        username: true,
+        profileImageUrl: true
+      })
+      .populate({
+        path: 'replies',
+        populate: {
+          path: 'user',
+          select: 'username profileImageUrl'
+        }
+      });
+      return res.status(200).json(messages);
+  } catch(e) {
+    return next(e);
+  }
+}
+
+// Takes in req.body.user and returns messages from this user
+exports.filterByUser = async function(req, res, next) {
+  try {
+    let user_id = await db.User.find({
+      "username":req.params.username
+    },{_id:1});
+    // console.log(user_id[0]._id + "-------");
+    let messages = await db.Message.find({
+      user: ObjectId(user_id[0]._id)
     })
       .sort({createdAt: 'desc'})
       .populate('user', {
