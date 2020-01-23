@@ -6,9 +6,10 @@ const bodyParser     = require('body-parser');
 const db             = require('./models');
 const errorHandler   = require('./handlers/error');
 const authRoutes     = require('./routes/auth');
-const userRoutes     = require('./routes/user');
-const twitterRoutes  = require('./routes/twitter');
-const messagesRoutes = require('./routes/messages');
+const userRoutes        = require('./routes/user');
+const twitterRoutes     = require('./routes/twitter');
+const locationIqRoutes  = require('./routes/locationIq');
+const messagesRoutes    = require('./routes/messages');
 const { loginRequired, ensureCorrectUser } = require('./middleware/auth');
 
 const PORT = 8081;
@@ -21,6 +22,7 @@ app.use(express.static(__dirname + "/public"));
 // Any requests to /api/auth (then anything) passed off to the authRoutes file
 app.use('/api/auth', authRoutes);
 app.use('/api/twitter',twitterRoutes);
+app.use('/api/locationIq',locationIqRoutes);
 app.use('/api/users/:id/messages', /* loginRequired, ensureCorrectUser, */ messagesRoutes);
 app.use('/api/users/:id', loginRequired, ensureCorrectUser, userRoutes);
 
