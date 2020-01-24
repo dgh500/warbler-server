@@ -72,6 +72,23 @@ exports.createMessage = async function(req, res, next) {
   }
 };
 
+
+/*
+ * Main GET function for messages
+ *
+ */
+exports.loadMessages = async function(req, res, next) {
+  try {
+    const { mode = 'all', q = '', limit = 0, orderBy = 'newest' } = req.query;
+    /****
+      UPTO HERE
+    *****/
+    return res.status(200).json(req.query);
+  } catch(e) {
+    return next(e);
+  }
+}
+
 // Takes in req.body.hashtag and returns messages with this hashtag
 exports.filterByHashtag = async function(req, res, next) {
   try {
