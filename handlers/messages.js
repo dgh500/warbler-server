@@ -88,7 +88,8 @@ exports.loadMessages = async function(req, res, next) {
     let { mode = 'all', q = '', limit = 0, orderBy = 'newest', orderDir = 'desc' } = req.query;
     let messages = [];
     let filterField = '';
-    let find = {};
+    let findStart = {};
+    let findEnd = {};
     let sort = {};
 
     // Which field is being filtered
@@ -106,10 +107,11 @@ exports.loadMessages = async function(req, res, next) {
     }
 
     // Sort field and direction
+    (orderDir === 'asc' ? orderDir = 1 : orderDir = -1);
     switch(orderBy) {
       case 'mostReplies':
-        sortField = '';
-        sort = {};
+        sortField = 'replyCount';
+        sort = {[sortField]: orderDir};
       break;
       case 'newest':
       default:
@@ -139,6 +141,9 @@ exports.loadMessages = async function(req, res, next) {
           hashtags: 1,
           createdAt: 1,
           updatedAt: 1,
+          replyCount: {
+            $size: "$replies"
+          },
           user: {
             _id: { $arrayElemAt: ['$userLookup._id',0] },
             username: { $arrayElemAt: ['$userLookup.username',0]},
@@ -148,6 +153,12 @@ exports.loadMessages = async function(req, res, next) {
       },
       {
         $match: findEnd
+      },
+      {
+        $sort: sort
+      },
+      {
+        $limit: Number(limit)
       }
     ]);
 
