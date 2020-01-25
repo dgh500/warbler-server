@@ -85,7 +85,7 @@ exports.createMessage = async function(req, res, next) {
 exports.loadMessages = async function(req, res, next) {
   try {
     console.log('-----');
-    let { mode = 'all', q = '', limit = 0, orderBy = 'newest', orderDir = 'desc' } = req.query;
+    let { mode = 'all', q = '', limit = 1000, orderBy = 'newest', orderDir = 'desc' } = req.query;
     let messages = [];
     let filterField = '';
     let findStart = {};
@@ -164,9 +164,6 @@ exports.loadMessages = async function(req, res, next) {
 
     console.log('-----');
     return res.status(200).json(messages);
-
-    return res.status(200).json(req.query);
-    // return res.status(200).json(messages);
   } catch(e) {
     return next(e);
   }

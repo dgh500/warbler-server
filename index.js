@@ -24,7 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/twitter',twitterRoutes);
 app.use('/api/locationIq',locationIqRoutes);
 app.use('/api/users/:id/messages', /* loginRequired, ensureCorrectUser, */ messagesRoutes);
-app.use('/api/users/:id', loginRequired, ensureCorrectUser, userRoutes);
+app.use('/api/users/:id', /*loginRequired, ensureCorrectUser, */userRoutes);
 
 app.get('/api/messages/', loginRequired, async function(req, res, next) {
   try {
