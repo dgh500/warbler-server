@@ -73,21 +73,95 @@ exports.createMessage = async function(req, res, next) {
 };
 
 
-/*
- * Main GET function for messages
+/**
+ * Main GET function for messages - params documented below are actually query strings
+ * @param {mode} String - all = all messages, hashtags = filter by hashtags, users = filter by users
+ * @param {q} String - only used if mode is not all, the query to search for
+ * @param {limit} Int - limit on messages returned ** if a message has replies these will also be returned
+ * @param {orderBy} String - how to order the search results, defaults to 'newest' other options are 'mostReplies'
+ * @param {orderDir} String - order direction - asc or desc, defaults to desc
  *
  */
 exports.loadMessages = async function(req, res, next) {
   try {
-    const { mode = 'all', q = '', limit = 0, orderBy = 'newest' } = req.query;
-    /****
-      UPTO HERE
-    *****/
+    console.log('-----');
+    let { mode = 'all', q = '', limit = 0, orderBy = 'newest', orderDir = 'desc' } = req.query;
+    let messages = [];
+    let filterField = '';
+    let find = {};
+    let sort = {};
+
+    // Which field is being filtered
+    switch(mode) {
+      case 'hashtags':
+        filterField = 'hashtags';
+        findStart = {[filterField]:`#${q}`};
+        findEnd   = {};
+      break;
+      case 'users':
+        filterField = 'user.username';
+        findStart = {};
+        findEnd   = {[filterField]:q};
+      break;
+    }
+
+    // Sort field and direction
+    switch(orderBy) {
+      case 'mostReplies':
+        sortField = '';
+        sort = {};
+      break;
+      case 'newest':
+      default:
+        sortField = 'createdAt';
+        sort = {[sortField]: orderDir};
+      break;
+    }
+
+    // Build Query using aggregate
+    messages = await db.Message.aggregate([
+      {
+        $match: findStart
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userLookup"
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          replies: 1,
+          text: 1,
+          hashtags: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          user: {
+            _id: { $arrayElemAt: ['$userLookup._id',0] },
+            username: { $arrayElemAt: ['$userLookup.username',0]},
+            profileImageUrl: { $arrayElemAt: ['$userLookup.profileImageUrl',0]}
+          }
+        }
+      },
+      {
+        $match: findEnd
+      }
+    ]);
+
+    console.log('-----');
+    return res.status(200).json(messages);
+
     return res.status(200).json(req.query);
+    // return res.status(200).json(messages);
   } catch(e) {
     return next(e);
   }
 }
+
+
 
 // Takes in req.body.hashtag and returns messages with this hashtag
 exports.filterByHashtag = async function(req, res, next) {
