@@ -84,13 +84,14 @@ exports.createMessage = async function(req, res, next) {
  */
 exports.loadMessages = async function(req, res, next) {
   try {
-    console.log('-----');
+    console.log('-----+++++-----+++++-----+++++-----');
     let { mode = 'all', q = '', limit = 1000, orderBy = 'newest', orderDir = 'desc' } = req.query;
     let messages = [];
     let filterField = '';
     let findStart = {};
     let findEnd = {};
     let sort = {};
+    if(limit == 0) { limit = 1000 }
 
     // Which field is being filtered
     switch(mode) {
@@ -125,12 +126,66 @@ exports.loadMessages = async function(req, res, next) {
       {
         $match: findStart
       },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "user",
+      //     foreignField: "_id",
+      //     as: "userLookup"
+      //   }
+      // },
       {
         $lookup: {
           from: "users",
-          localField: "user",
-          foreignField: "_id",
+          let: {
+            userId: "$user"
+          },
+          pipeline: [
+            {
+              $match: { $expr: { $eq: ["$_id", "$$userId"] } }
+            }
+          ],
           as: "userLookup"
+        }
+      },
+      /* Replies Lookup */
+      {
+        $lookup: {
+          from: "messages",
+          let: {
+            replyMessageId: "$replies"
+          },
+          pipeline: [
+            { $match: { $expr: { $in: ["$_id", "$$replyMessageId"] } } },
+            {
+              $lookup: {
+                from: "users",
+                let: {
+                  userId: "$user"
+                },
+                pipeline: [
+                  { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
+                ],
+                as: "replyUserLookup"
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                text: 1,
+                hashtags: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                replies: 1,
+                user: {
+                  _id: { $arrayElemAt: ['$replyUserLookup._id',0] },
+                  username: { $arrayElemAt: ['$replyUserLookup.username',0]},
+                  profileImageUrl: { $arrayElemAt: ['$replyUserLookup.profileImageUrl',0]}
+                }
+              }
+            },
+          ],
+          as: "repliesLookup"
         }
       },
       {
@@ -144,6 +199,7 @@ exports.loadMessages = async function(req, res, next) {
           replyCount: {
             $size: "$replies"
           },
+          replies: '$repliesLookup',
           user: {
             _id: { $arrayElemAt: ['$userLookup._id',0] },
             username: { $arrayElemAt: ['$userLookup.username',0]},
@@ -162,7 +218,7 @@ exports.loadMessages = async function(req, res, next) {
       }
     ]);
 
-    console.log('-----');
+    console.log('-----+++++-----+++++-----+++++-----+++++-----+++++-----+++++-----+++++-----');
     return res.status(200).json(messages);
   } catch(e) {
     return next(e);

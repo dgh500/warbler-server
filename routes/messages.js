@@ -21,7 +21,7 @@ router.route('/:message_id/reply')
   .post(replyToMessage);
 
 
-router.route('/mode/user/:username')
-  .get(filterByUser);
+// router.route('/mode/user/:username')
+//   .get(filterByUser);
 
 module.exports = router;

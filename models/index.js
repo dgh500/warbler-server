@@ -1,5 +1,16 @@
 const mongoose = require('mongoose');
-mongoose.set('debug', true);
+const colors   = require('colors');
+// mongoose.set('debug', true);
+mongoose.set('debug', function (collectionName, method, query, doc) {
+  console.log(
+    'Mongoose: '.cyan +
+    collectionName.red +
+    '.' +
+    method.green +
+    ' (' +
+    JSON.stringify(query, null, 2).green.bold +
+    ')');
+});
 mongoose.Promise = Promise;
 mongoose.connect('mongodb://localhost/warbler', {
   keepAlive: true,
