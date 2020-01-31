@@ -126,14 +126,6 @@ exports.loadMessages = async function(req, res, next) {
       {
         $match: findStart
       },
-      // {
-      //   $lookup: {
-      //     from: "users",
-      //     localField: "user",
-      //     foreignField: "_id",
-      //     as: "userLookup"
-      //   }
-      // },
       {
         $lookup: {
           from: "users",
