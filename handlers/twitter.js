@@ -48,7 +48,8 @@ exports.getWoeid = async function(req, res, next) {
       })
       .then(function(result) {
         let woeid = result.data[0].woeid;
-        return res.status(200).json({woeid});
+        let name = result.data[0].name;
+        return res.status(200).json({woeid, name});
 //        console.log(resultTags);
       })
       .catch(function(error) {
