@@ -104,7 +104,8 @@ exports.loadMessages = async function(req, res, next) {
       case 'users':
         filterField = 'user.username';
         findStart = {};
-        findEnd   = {[filterField]:q};
+        // findEnd   = {[filterField]:q};
+        findEnd = {[filterField]: { $regex: `${q}`, $options: 'i' } };
       break;
     }
 
