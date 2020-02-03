@@ -97,7 +97,8 @@ exports.loadMessages = async function(req, res, next) {
     switch(mode) {
       case 'hashtags':
         filterField = 'hashtags';
-        findStart = {[filterField]:`#${q}`};
+        // findStart = {[filterField]: `#${q} ` };
+        findStart = {[filterField]: { $regex: `#${q}`, $options: 'i' } };
         findEnd   = {};
       break;
       case 'users':
