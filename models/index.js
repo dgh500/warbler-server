@@ -12,7 +12,7 @@ mongoose.set('debug', function (collectionName, method, query, doc) {
     ')');
 });
 mongoose.Promise = Promise;
-mongoose.connect('mongodb://localhost/warbler', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/warbler', {
   keepAlive: true,
   useNewUrlParser: true,
   useUnifiedTopology: true
