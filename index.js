@@ -23,8 +23,8 @@ app.use(express.static(__dirname + "/public"));
 app.use('/api/auth', authRoutes);
 app.use('/api/twitter',twitterRoutes);
 app.use('/api/locationIq',locationIqRoutes);
-app.use('/api/users/:id/messages', /* loginRequired, ensureCorrectUser, */ messagesRoutes);
-app.use('/api/users/:id', /*loginRequired, ensureCorrectUser, */userRoutes);
+app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messagesRoutes);
+app.use('/api/users/:id', loginRequired, ensureCorrectUser, userRoutes);
 
 app.get('/api/messages/', loginRequired, async function(req, res, next) {
   try {
@@ -32,13 +32,14 @@ app.get('/api/messages/', loginRequired, async function(req, res, next) {
       .sort({createdAt: 'desc'})
       .populate('user', {
         username: true,
+        email: true,
         profileImageUrl: true
       })
       .populate({
         path: 'replies',
         populate: {
           path: 'user',
-          select: 'username profileImageUrl'
+          select: 'username email profileImageUrl'
         }
       });
       return res.status(200).json(messages);

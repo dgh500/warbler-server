@@ -84,7 +84,7 @@ exports.createMessage = async function(req, res, next) {
  */
 exports.loadMessages = async function(req, res, next) {
   try {
-    console.log('-----+++++-----+++++-----+++++-----');
+    console.log('--_-_-_-_-_---');
     let { mode = 'all', q = '', limit = 1000, orderBy = 'newest', orderDir = 'desc' } = req.query;
     let messages = [];
     let filterField = '';
@@ -174,6 +174,7 @@ exports.loadMessages = async function(req, res, next) {
                 user: {
                   _id: { $arrayElemAt: ['$replyUserLookup._id',0] },
                   username: { $arrayElemAt: ['$replyUserLookup.username',0]},
+                  email: { $arrayElemAt: ['$replyUserLookup.email',0]},
                   profileImageUrl: { $arrayElemAt: ['$replyUserLookup.profileImageUrl',0]}
                 }
               }
@@ -197,6 +198,7 @@ exports.loadMessages = async function(req, res, next) {
           user: {
             _id: { $arrayElemAt: ['$userLookup._id',0] },
             username: { $arrayElemAt: ['$userLookup.username',0]},
+            email: { $arrayElemAt: ['$userLookup.email',0]},
             profileImageUrl: { $arrayElemAt: ['$userLookup.profileImageUrl',0]}
           }
         }
@@ -222,56 +224,56 @@ exports.loadMessages = async function(req, res, next) {
 
 
 // Takes in req.body.hashtag and returns messages with this hashtag
-exports.filterByHashtag = async function(req, res, next) {
-  try {
-    let messages = await db.Message.find({
-      hashtags: `#${req.params.hashtag}`
-    })
-      .sort({createdAt: 'desc'})
-      .populate('user', {
-        username: true,
-        profileImageUrl: true
-      })
-      .populate({
-        path: 'replies',
-        populate: {
-          path: 'user',
-          select: 'username profileImageUrl'
-        }
-      });
-      return res.status(200).json(messages);
-  } catch(e) {
-    return next(e);
-  }
-}
+// exports.filterByHashtag = async function(req, res, next) {
+//   try {
+//     let messages = await db.Message.find({
+//       hashtags: `#${req.params.hashtag}`
+//     })
+//       .sort({createdAt: 'desc'})
+//       .populate('user', {
+//         username: true,
+//         profileImageUrl: true
+//       })
+//       .populate({
+//         path: 'replies',
+//         populate: {
+//           path: 'user',
+//           select: 'username profileImageUrl'
+//         }
+//       });
+//       return res.status(200).json(messages);
+//   } catch(e) {
+//     return next(e);
+//   }
+// }
 
 // Takes in req.body.user and returns messages from this user
-exports.filterByUser = async function(req, res, next) {
-  try {
-    let user_id = await db.User.find({
-      "username":req.params.username
-    },{_id:1});
-    // console.log(user_id[0]._id + "-------");
-    let messages = await db.Message.find({
-      user: ObjectId(user_id[0]._id)
-    })
-      .sort({createdAt: 'desc'})
-      .populate('user', {
-        username: true,
-        profileImageUrl: true
-      })
-      .populate({
-        path: 'replies',
-        populate: {
-          path: 'user',
-          select: 'username profileImageUrl'
-        }
-      });
-      return res.status(200).json(messages);
-  } catch(e) {
-    return next(e);
-  }
-}
+// exports.filterByUser = async function(req, res, next) {
+//   try {
+//     let user_id = await db.User.find({
+//       "username":req.params.username
+//     },{_id:1});
+//     // console.log(user_id[0]._id + "-------");
+//     let messages = await db.Message.find({
+//       user: ObjectId(user_id[0]._id)
+//     })
+//       .sort({createdAt: 'desc'})
+//       .populate('user', {
+//         username: true,
+//         profileImageUrl: true
+//       })
+//       .populate({
+//         path: 'replies',
+//         populate: {
+//           path: 'user',
+//           select: 'username profileImageUrl'
+//         }
+//       });
+//       return res.status(200).json(messages);
+//   } catch(e) {
+//     return next(e);
+//   }
+// }
 
 // Gets all hashtags in the database & return as an array of strings
 exports.getHashtags = async function(req, res, next) {
